@@ -1,0 +1,6 @@
+[submodule "app/Modules/Models"]
+	path = app/Modules/Models
+	url = https://github.com/WilsonParker/ai-generate-models
+[submodule "app/Modules/Services"]
+	path = app/Modules/Services
+	url = https://github.com/WilsonParker/ai-generate-services

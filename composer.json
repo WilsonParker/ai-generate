@@ -1,0 +1,142 @@
+{
+  "name": "laravel/laravel",
+  "type": "project",
+  "description": "The Laravel Framework.",
+  "keywords": [
+    "framework",
+    "laravel"
+  ],
+  "license": "MIT",
+  "require": {
+    "php": "^8.2",
+    "ext-gd": "*",
+    "darkaonline/l5-swagger": "^8.5",
+    "doctrine/dbal": "^3.6",
+    "elasticsearch/elasticsearch": "^8.10",
+    "getbrevo/brevo-php": "1.x.x",
+    "google/apiclient": "^2.15",
+    "guzzlehttp/guzzle": "^7.5",
+    "http-interop/http-factory-guzzle": "^1.2",
+    "laravel/framework": "^10.0",
+    "laravel/passport": "^11.8",
+    "laravel/sanctum": "^3.2",
+    "laravel/scout": "^v10.5.1",
+    "laravel/slack-notification-channel": "^2.5",
+    "laravel/socialite": "^5.6",
+    "laravel/tinker": "^2.8",
+    "laravel/vapor-cli": "^1.56",
+    "laravel/vapor-core": "^2.31",
+    "league/flysystem-aws-s3-v3": "^3.0",
+    "league/flysystem-path-prefixing": "^3.0",
+    "maatwebsite/excel": "^3.1",
+    "meilisearch/meilisearch-php": "^1.3",
+    "openai-php/laravel": "^0.4.1",
+    "predis/predis": "^2.2",
+    "pusher/pusher-php-server": "^7.2",
+    "spatie/laravel-feed": "^4.3",
+    "spatie/laravel-medialibrary": "^10.0.0",
+    "spatie/laravel-sitemap": "^6.3",
+    "spatie/laravel-slack-alerts": "^1.2",
+    "spatie/laravel-tags": "^4.5",
+    "stripe/stripe-php": "^10.12"
+  },
+  "require-dev": {
+    "barryvdh/laravel-debugbar": "^3.8",
+    "fakerphp/faker": "^1.9.1",
+    "laravel/pint": "^1.0",
+    "laravel/sail": "^1.21",
+    "mockery/mockery": "^1.4.4",
+    "nunomaduro/collision": "^7.0",
+    "phpunit/phpunit": "^10.0",
+    "spatie/laravel-ignition": "^2.0"
+  },
+  "autoload": {
+    "files": [
+      "app/Libraries/GPT-3-Encoder-PHP-main/gpt3-encoder.php",
+      "app/Helper.php"
+    ],
+    "classmap": [
+    ],
+    "psr-4": {
+      "App\\": "app/",
+      "Database\\Factories\\": "database/factories/",
+      "Database\\Seeders\\": "database/seeders/",
+      "AIGenerate\\Models\\": "app/Modules/Models/src",
+      "AIGenerate\\Models\\Database\\Seeders\\": "app/Modules/Models/database/seeders",
+      "AIGenerate\\Models\\Database\\Factories\\": "app/Modules/Models/database/factories",
+      "AIGenerate\\Services\\Mails\\": "app/Modules/Services/Mails/src",
+      "AIGenerate\\Services\\Exceptions\\": "app/Modules/Services/Exceptions/src",
+      "AIGenerate\\Services\\Stripe\\": "app/Modules/Services/Stripe/src",
+      "AIGenerate\\Services\\AI\\": "app/Modules/Services/AI/src",
+      "AIGenerate\\Services\\Stock\\": "app/Modules/Services/Stock/src",
+      "AIGenerate\\Services\\Generate\\": "app/Modules/Services/Generate/src",
+      "AIGenerate\\Services\\Brevo\\": "app/Modules/Services/Brevo/src",
+      "AIGenerate\\Services\\Repositories\\": "app/Modules/Services/Repositories/src",
+      "AIGenerate\\Services\\Google\\": "app/Modules/Services/Google/src",
+      "AIGenerate\\Services\\Cache\\": "app/Modules/Services/Cache/src",
+      "AIGenerate\\Services\\Enums\\": "app/Modules/Services/Enums/src",
+      "AIGenerate\\Services\\Keyword\\": "app/Modules/Services/Keyword/src",
+      "AIGenerate\\Services\\RSS\\": "app/Modules/Services/RSS/src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+      "@php artisan package:discover --ansi"
+    ],
+    "post-update-cmd": [
+      "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+    ],
+    "post-root-package-install": [
+      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+    ],
+    "post-create-project-cmd": [
+      "@php artisan key:generate --ansi"
+    ],
+    "migrate": [
+      "./vendor/bin/sail artisan migrate --path=app/Modules/Models/database/migrations"
+    ],
+    "sail-init-database": [
+      "./vendor/bin/sail artisan migrate:fresh --path=app/Modules/Models/database/migrations",
+      "./vendor/bin/sail artisan passport:install --uuids",
+      "./vendor/bin/sail artisan db:seed"
+    ],
+    "sail-init-scout": [
+      "sail artisan scout:delete-all-indexes",
+      "sail artisan scout:flush 'AIGenerate\\Models\\Prompt\\Prompt'",
+      "sail artisan scout:import 'AIGenerate\\Models\\Prompt\\Prompt'",
+      "sail artisan scout:flush 'AIGenerate\\Models\\Stock\\Stock'",
+      "sail artisan scout:import 'AIGenerate\\Models\\Stock\\Stock'",
+      "sail artisan scout:sync-index-settings"
+    ],
+    "init-all": [
+      "composer sail-init-database",
+      "composer sail-init-scout"
+    ],
+    "update-modules": [
+      "cd app/Modules/Services && git checkout development && git pull origin development && cd ../../../",
+      "cd app/Modules/Models && git checkout development && git pull origin development  && cd ../../../"
+    ]
+  },
+  "extra": {
+    "laravel": {
+      "dont-discover": []
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "php-http/discovery": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

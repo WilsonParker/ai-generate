@@ -1,0 +1,47 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ master, development ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          tools: composer:v2
+          coverage: none
+      - name: Require Vapor CLI
+        run: composer global require laravel/vapor-cli
+      - name: Install Modules
+        run: |
+          git clone --branch $BRANCH https://$GH_TOKEN@github.com/WilsonParker/ai-generate-models.git app/Modules/Models
+          git clone --branch $BRANCH https://$GH_TOKEN@github.com/WilsonParker/ai-generate-services.git app/Modules/Services
+        env:
+          BRANCH: ${{ github.ref_name }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          MODELS_MODULE: ${{ secrets.MODELS_MODULE }}
+          SERVICES_MODULES: ${{ secrets.SERVICES_MODULES }}
+      - name: Install Project Dependencies
+        run: |
+          composer install --no-dev --optimize-autoloader --ignore-platform-req=*
+        env:
+          OAUTH_PUBLIC: ${{ secrets.OAUTH_PUBLIC }}
+          OAUTH_PRIVATE: ${{ secrets.OAUTH_PRIVATE }}
+      - name: Deploy Environment
+        run: |
+          if [[ $BRANCH_REF == 'refs/heads/master' ]]; then
+            vapor deploy production
+          elif [[ $BRANCH_REF == 'refs/heads/development' ]]; then
+            vapor deploy development
+          else
+            echo "${{ github.ref }} Branch is not supported."
+          fi
+        env:
+          BRANCH_REF: ${{ github.ref }}
+          VAPOR_API_TOKEN: ${{ secrets.VAPOR_API_TOKEN }}
