@@ -1,0 +1,38 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      php: 8.1
+    commands:
+      - apt-get update
+      - apt-get install -y git
+      - curl -s https://getcomposer.org/installer | php
+      - mv composer.phar /usr/local/bin/composer
+  pre_build:
+    commands:
+      - echo "Start pre-build phase"
+      - git clone --branch $BRANCH https://github.com/WilsonParker/ai-generate-models app/Modules/Models
+      - git clone --branch $BRANCH https://github.com/WilsonParker/ai-generate-services app/Modules/Services
+      - composer config http-basic.nova.laravel.com "$NOVA_ID" "$NOVA_KEY"
+      - composer install --no-dev --optimize-autoloader --ignore-platform-req=*
+  build:
+    commands:
+      - echo "Start build phase"
+      - php artisan route:cache
+      - php artisan config:cache
+      - php artisan event:cache
+      - php artisan scout:sync-index
+  post_build:
+    commands:
+      - echo "Start post-build phase"
+
+artifacts:
+  type: zip
+  files:
+    - '**/*'
+  name: $(date +%Y-%m-%dT%H:%M:%S).zip
+
+proxy:
+  upload-artifacts: no
+  logs: no
