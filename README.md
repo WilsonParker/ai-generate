@@ -19,6 +19,20 @@ text to image, image to image 등 기능을 제공합니다
 - sail (docker)
     - mariadb
 
+## 배포 환경
+
+- Git Action
+    - development, master 브랜치로 push 가 되면 workflow 를 통해 vapor 로 배포가 됩니다
+- Vapor
+    - AWS Lambda 서버리스로 배포가 됩니다
+- AWS
+    - RDS
+        - Aurora (Mysql) Cluster 를 사용합니다
+    - S3
+        - 이미지 저장소로 사용합니다
+    - Cloud Front
+        - 이미지 CDN 으로 사용합니다
+
 ## Flow
 
 - Apache/Nginx 웹 서버
