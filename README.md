@@ -21,6 +21,8 @@ text to image, image to image 등 기능을 제공합니다
 
 ## 배포 환경
 
+AWS elastic beanstalk, Laravel Forge 등을 이용해서 배포를 했었다가 비용 절약, 배포 편의 등 을 위해 AWS Lambda 로 변경하였습니다
+
 - Git Action
     - development, master 브랜치로 push 가 되면 workflow 를 통해 vapor 로 배포가 됩니다
 - Vapor
@@ -32,6 +34,8 @@ text to image, image to image 등 기능을 제공합니다
         - 이미지 저장소로 사용합니다
     - Cloud Front
         - 이미지 CDN 으로 사용합니다
+    - Route53
+        - 도메인을 서버, CDN 등 과 연결 합니다
 
 ## Flow
 
